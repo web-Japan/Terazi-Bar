@@ -1,0 +1,207 @@
+/* =========================================================
+   今夜の気分は？ - LP スタイル
+   ベース: 鮮やかなイエロー / 白ハテナ / ポスター的ポップ
+   ========================================================= */
+
+:root{
+  --yellow: #FFD400;
+  --ink: #14120B;
+  --paper: #FFFDF7;
+  --line: #14120B;
+  --mark-alpha: 0.32;
+}
+
+*, *::before, *::after{
+  box-sizing: border-box;
+}
+
+html, body{
+  height: 100%;
+}
+
+body{
+  margin: 0;
+  min-height: 100svh;
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+               "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+               "Yu Gothic", "Segoe UI", sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 背景色は body ではなく、全画面固定のこのレイヤーに指定する
+   (一部のプレビュー環境で body への直接背景指定が無効化されるための対策) */
+.stage{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--yellow);
+}
+
+/* ---------------------------------------------------------
+   背景の「？」フィールド
+   --------------------------------------------------------- */
+.question-field{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.question-field .mark{
+  position: absolute;
+  color: var(--paper);
+  opacity: var(--mark-alpha);
+  font-weight: 800;
+  line-height: 1;
+  user-select: none;
+  will-change: transform;
+}
+
+/* ---------------------------------------------------------
+   メインコンテンツ
+   --------------------------------------------------------- */
+.content{
+  position: relative;
+  z-index: 2;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 9vh 7vw 8vh;
+  gap: 0;
+}
+
+.eyebrow{
+  margin: 0 0 14px;
+  font-size: clamp(15px, 4vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(20, 18, 11, 0.72);
+}
+
+.headline{
+  margin: 0 0 clamp(40px, 9vh, 68px);
+  font-size: clamp(44px, 13vw, 76px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------
+   選択ボタン
+   --------------------------------------------------------- */
+.choices{
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.choice{
+  appearance: none;
+  border: 3px solid var(--line);
+  border-radius: 26px;
+  padding: 26px 24px;
+  width: 100%;
+  min-height: 84px;
+  font-family: inherit;
+  font-size: clamp(19px, 5.4vw, 23px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 6px 6px 0 var(--line);
+  transform: translate(0, 0);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.choice--light{
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.choice--dark{
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ホバー（据え置き型デバイス向け） */
+@media (hover: hover) and (pointer: fine){
+  .choice:hover{
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--line);
+  }
+}
+
+/* タップ／押下時 */
+.choice:active{
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.choice:focus-visible{
+  outline: 3px solid var(--ink);
+  outline-offset: 4px;
+}
+
+/* ---------------------------------------------------------
+   初回ロード時のフェードイン
+   --------------------------------------------------------- */
+[data-fade]{
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+[data-fade].is-visible{
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-fade="1"].is-visible{ animation-delay: 0s; }
+[data-fade="2"].is-visible{ animation-delay: 0.12s; }
+[data-fade="3"].is-visible{ animation-delay: 0.26s; }
+
+@keyframes fadeUp{
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 動きを抑えたい環境への配慮 */
+@media (prefers-reduced-motion: reduce){
+  [data-fade]{
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .choice{
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------
+   小さめ画面 / 横長画面の微調整
+   --------------------------------------------------------- */
+@media (max-height: 640px){
+  .content{
+    padding-top: 6vh;
+    padding-bottom: 5vh;
+  }
+  .headline{
+    margin-bottom: 32px;
+  }
+}
+
+@media (min-width: 480px){
+  .content{
+    padding-top: 12vh;
+  }
+}
